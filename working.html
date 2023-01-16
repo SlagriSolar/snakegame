@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>JavaScript Snake Game</title>
+  <style>
+    /* Some basic CSS to style the game board */
+    canvas {
+      border: 1px solid black;
+	  background-color: #f9f9f9;
+	  background: linear-gradient(to bottom, #f9f9f9, #f0f0f0);
+	    background-image: url('path/to/background-image.jpg');
+  background-size: cover;
+    }
+	canvas .snake {
+  background-color: #4CAF50;
+  width: 10px;
+  height: 10px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  animation: snake-move 0.2s linear infinite;
+}
+@keyframes snake-move {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
+  }
+}
+
+/* Change the color and size of the food */
+canvas .food {
+  background-color: #f44336;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  animation: food-pulse 1s linear infinite;
+}
+@keyframes food-pulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.2);
+  }
+}
+
+/* Add a border to the game board */
+canvas {
+  border: 5px solid #333;
+}
+
+/* Change the font and color of the game over text */
+#game-over {
+  font-family: Arial, sans-serif;
+  font-size: 36px;
+  color: #f44336;
+}
+#game-over {
+  text-shadow: 2px 2px 5px #f44336;
+}
+  </style>
+</head>
+<body>
+  <canvas id="game-board"></canvas>
+
+  <script>
+    // Get the canvas element
+    var canvas = document.getElementById("game-board");
+    var ctx = canvas.getContext("2d");
+
+    // Set the canvas size to the size of the browser window
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Set the size of each grid square in pixels
+    var blockSize = 10;
+
+    // Set the initial position and direction of the snake
+    var snake = [
+      {x: canvas.width / 2, y: canvas.height / 2}
+    ];
+    var direction = "right";
+
+    // Set the initial position of the food
+    var foodX = Math.floor(Math.random() * (canvas.width - blockSize) / blockSize) * blockSize;
+    var foodY = Math.floor(Math.random() * (canvas.height - blockSize) / blockSize) * blockSize;
+
+    // Function to draw the snake on the canvas
+    function drawSnake() {
+      ctx.fillStyle = "green";
+      for (var i = 0; i < snake.length; i++) {
+        ctx.fillRect(snake[i].x, snake[i].y, blockSize, blockSize);
+      }
+    }
+
+    // Function to draw the food on the canvas
+    function drawFood() {
+      ctx.fillStyle = "red";
+      ctx.fillRect(foodX, foodY, blockSize, blockSize);
+    }
+
+    // Function to move the snake
+    function moveSnake() {
+      var nextX = snake[0].x;
+      var nextY = snake[0].y;
+
+      if (direction === "right") {
+        nextX += blockSize;
+      } else if (direction === "left") {
+        nextX -= blockSize;
+      } else if (direction === "up") {
+        nextY -= blockSize;
+      } else if (direction === "down") {
+        nextY += blockSize;
+      }
+
+      // Check if the snake has hit the food
+      if (nextX >= foodX && nextX < foodX + blockSize && nextY >= foodY && nextY < foodY + blockSize) {
+        // Generate new food position
+        foodX = Math.floor(Math.random() * (canvas.width - blockSize) / blockSize) * blockSize;
+        foodY = Math.floor(Math.random() * (canvas.height - blockSize) / blockSize) * blockSize;
+        // Add new block to the snake
+        var lastBlock = snake[snake.length - 1];
+        snake.push({ x: lastBlock.x, y: lastBlock.y });
+      } else {
+        // Remove the last block of the snake
+        snake.pop();
+      }
+
+      // Check if the snake has hit the wall
+      if (nextX < 0 || nextX >= canvas.width || nextY < 0 || nextY >= canvas.height) {
+        alert("Game Over!");
+        clearInterval(gameLoop);
+        return;
+      }
+
+      // Check if the snake has hit itself
+      for (var i = 1; i < snake.length; i++) {
+        if (nextX === snake[i].x && nextY === snake[i].y) {
+          alert("Game Over!");
+          clearInterval(gameLoop);
+          return;
+        }
+      }
+
+      // Add the new block to the snake
+      snake.unshift({ x: nextX, y: nextY });
+    }
+
+    // Function to update the game state
+    function update() {
+      moveSnake();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawFood();
+      drawSnake();
+    }
+
+    // Keydown event to change the direction of the snake
+    document.onkeydown = function(event) {
+      if (event.keyCode === 37 && direction !== "right") {
+        direction = "left";
+      } else if (event.keyCode === 38 && direction !== "down") {
+        direction = "up";
+      } else if (event.keyCode === 39 && direction !== "left") {
+        direction = "right";
+      } else if (event.keyCode === 40 && direction !== "up") {
+        direction = "down";
+      }
+    }
+
+    // Start the game loop
+    var gameLoop = setInterval(update, 100);
+  </script>
+</body>
+</html>
