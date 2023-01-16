@@ -70,8 +70,8 @@ canvas {
     var ctx = canvas.getContext("2d");
 
     // Set the canvas size to the size of the browser window
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = 1000px;
+    canvas.height = 1000px;
 
     // Set the size of each grid square in pixels
     var blockSize = 10;
@@ -170,7 +170,7 @@ canvas {
     }
 
     // Start the game loop
-    var gameLoop = setInterval(update, 100);
+    var gameLoop = setInterval(update, 300);
   </script>
 </body>
 </html>
